@@ -1,0 +1,3 @@
+C:\Users\Home\Dropbox\MESH\Projects\2012\12MP002 Echoscapes\Workspace\Phase 3\Echoscape V3\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Home\Dropbox\MESH\Projects\2012\12MP002 Echoscapes\Workspace\Phase 3\Echoscape V3\obj\Debug\Assembly-CSharp.dll
+C:\Users\Home\Dropbox\MESH\Projects\2012\12MP002 Echoscapes\Workspace\Phase 3\Echoscape V3\obj\Debug\Assembly-CSharp.pdb

@@ -1,0 +1,19 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Scene/LoadAudioFile.cs">
+    <Files>
+      <File FileName="Assets/Scripts/GUI/MainGUI.cs" Line="161" Column="3" />
+      <File FileName="Assets/Scripts/GUI/WindowManager.cs" Line="23" Column="28" />
+      <File FileName="Assets/Scripts/GUI/ScapeSelector.cs" Line="40" Column="51" />
+      <File FileName="Assets/Scripts/Load/EchoscapesLoader.cs" Line="105" Column="7" />
+      <File FileName="Assets/Scripts/Load/AudioBuilder.cs" Line="42" Column="52" />
+      <File FileName="Assets/Scripts/Load/AudioMobileModel.cs" Line="21" Column="1" />
+      <File FileName="Assets/Scripts/Load/RecordingNode.cs" Line="61" Column="9" />
+      <File FileName="Assets/Scripts/Scene/LoadAudioFile.cs" Line="66" Column="10" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

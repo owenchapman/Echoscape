@@ -1,0 +1,6 @@
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/workspace/Phase 3.1/Echoscape 3.1/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/workspace/Phase 3.1/Echoscape 3.1/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/workspace/Phase 3.1/Echoscape 3.1/obj/Debug/Assembly-CSharp-firstpass.dll
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/workspace/Phase 3.1/Echoscape 3.1/obj/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/Workspace/Phase 3.1/Echoscape 3.1/obj/Debug/Assembly-CSharp-firstpass.dll
+/Users/dan/Dropbox/MESH/Projects/2012/12MP002 Echoscapes/Workspace/Phase 3.1/Echoscape 3.1/obj/Debug/Assembly-CSharp-firstpass.dll.mdb
