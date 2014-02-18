@@ -138,7 +138,7 @@ public static class MainGUI
 
     private static void MapGUI()
     {
-        var loadRect = new Rect(clientRect.width / 2 - 50, clientRect.height - 100, 100, 55);
+        var loadRect = new Rect(clientRect.width / 2 - 50, clientRect.height - 35, 100, 55);
 
         var infoRect = new Rect(0, 0, 400, 100);
 

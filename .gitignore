@@ -1,6 +1,6 @@
-Temp/*
-Library/*
-Obj/*
+Temp/
+Library/
+Obj/
  
 *.csproj
 *.unityproj

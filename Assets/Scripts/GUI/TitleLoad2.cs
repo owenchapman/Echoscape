@@ -6,6 +6,7 @@ public class TitleLoad2 : MonoBehaviour {
     public bool inGame = false;
     private Color guiColor;
     public Texture backColor;
+	public GameObject titleTrack;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +23,8 @@ public class TitleLoad2 : MonoBehaviour {
         {
             Application.LoadLevelAdditive(1);
             StartCoroutine(FadeAndDie());
+
+			titleTrack.audio.Play();
     		
         }
 	

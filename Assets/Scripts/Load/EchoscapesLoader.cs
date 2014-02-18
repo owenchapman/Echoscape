@@ -254,6 +254,8 @@ public class EchoscapesLoader : MonoBehaviour
         //MUST set scale before proceeding
         //builder.SetScale(pScale, translate);
         Debug.Log("Way data size: " + dlData.ways.Length);
+
+
         builder.ConstructWays(this.gameObject, map, dlData, conData, WaysComplete);
     }
 
@@ -311,6 +313,9 @@ public class EchoscapesLoader : MonoBehaviour
         //hack
         GameObject.FindGameObjectWithTag("NodeManager").GetComponent<NodeFilter>().ResetToCompleteList();
         GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(Color.clear);
+		//play the title track
+		GameObject.FindGameObjectWithTag("SFX").audio.Play ();
+
 //        var go = GameObject.Instantiate(Resources.Load("Prefabs/HexTerrain")) as GameObject;
 //        var hex = go.GetComponent<Hexes2>();
 //        hex.terrain = conData.terrain;
