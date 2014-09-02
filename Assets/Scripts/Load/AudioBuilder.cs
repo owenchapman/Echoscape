@@ -69,7 +69,7 @@ public class AudioBuilder
             allNodeData.Add(data);
         }
         
-        conData.averagePoint = avg / nodes.Count;
+        //conData.averagePoint = avg / nodes.Count;
 
         conData.recNodes = new GameObject("Recording Nodes");
         conData.recNodes.tag = "NodeParentObj";

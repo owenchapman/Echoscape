@@ -15,7 +15,7 @@ public class LogPrint : MonoBehaviour
 	{
 		
 		Application.RegisterLogCallback (HandleLog);
-		scrollRect = new Rect(2, 2, Screen.width, 100);
+		scrollRect = new Rect(50, 12, Screen.width, 100);
 		Debug.Log("Starting Log");
 		//scrollPosition = new Vector2(0f, 0f);
 	

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
+[Serializable]
 public class MapNodeModel
 {
     public int Id { get; set; }
@@ -11,7 +11,7 @@ public class MapNodeModel
     public float Longitude { get; set; }
     public Vector3 Position { get; set; }
 }
-
+[Serializable]
 public class MapWayModel
 {
     public enum WayType

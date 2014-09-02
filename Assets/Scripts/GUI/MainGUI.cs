@@ -46,9 +46,9 @@ public static class MainGUI
     private static GameObject nodeParentObj;
     private static bool autoLoop = false;
 
-	private static string message = "";
-	private static float alpha = 1.0f;
-	private static char pathChar = '/';
+    private static string message = "";
+    private static float alpha = 1.0f;
+    private static char pathChar = '/';
 
     public static void Init()
     {
@@ -127,7 +127,7 @@ public static class MainGUI
 
             case 1:
                 foreach (var c in controllers)
-				c.Display();
+                    c.Display();
                 break;
 
             case 2:
@@ -142,8 +142,8 @@ public static class MainGUI
 
         var infoRect = new Rect(0, 0, 400, 100);
 
-        
-        
+
+
         var offset = new RectOffset(5, 5, 5, 15);
         var contentRect = offset.Remove(loadRect);
 
@@ -152,9 +152,9 @@ public static class MainGUI
 
         GUILayout.BeginArea(infoRect);
 
-        GUILayout.Label("To select an Echoscape, right mouse click on the map to place the marker." 
+        GUILayout.Label("To select an Echoscape, right mouse click on the map to place the marker."
                         + "\nThen, click the button at the bottom of the screen", skin.customStyles[7]);
-                         
+
         GUILayout.EndArea();
 
         GUI.Box(loadRect, "");
@@ -176,44 +176,44 @@ public static class MainGUI
 
         GUILayout.BeginArea(contentRect);
         GUILayout.BeginHorizontal();
-	
+
 
         var timeCounter = "record what you hear...";
 
-//        audioRecorder.loop = GUILayout.Toggle(audioRecorder.loop, "Loop");
-//        audioRecorder.autoName = GUILayout.Toggle(audioRecorder.autoName, "Auto Name");
-//        audioRecorder.writeToFile = GUILayout.Toggle(audioRecorder.writeToFile, "Write To File");
+        //        audioRecorder.loop = GUILayout.Toggle(audioRecorder.loop, "Loop");
+        //        audioRecorder.autoName = GUILayout.Toggle(audioRecorder.autoName, "Auto Name");
+        //        audioRecorder.writeToFile = GUILayout.Toggle(audioRecorder.writeToFile, "Write To File");
 
         //record behaviour
-		recTrigger = GUILayout.Toggle(recTrigger, "", skin.customStyles[10]);
+        recTrigger = GUILayout.Toggle(recTrigger, "", skin.customStyles[10]);
 
         if (recTrigger)
             timeCounter = (Time.timeSinceLevelLoad - audioRecorder.timeStamp).ToString();
 
         audioRecorder.ToggleRecord(recTrigger);
-		GUILayout.Space(5);
+        GUILayout.Space(5);
 
         GUILayout.Label(timeCounter, skin.customStyles[6]);
-		GUILayout.EndHorizontal();
+        GUILayout.EndHorizontal();
 
-		GUILayout.Space(10);
+        GUILayout.Space(10);
 
-		GUILayout.BeginHorizontal();
-		//upload a user sound
-		if(GUILayout.Button("", skin.customStyles[11]))
-		{
-			audioFileLoader.LoadFile();
-		}
+        GUILayout.BeginHorizontal();
+        //upload a user sound
+        if (GUILayout.Button("", skin.customStyles[11]))
+        {
+            audioFileLoader.LoadFile();
+        }
 
-		GUILayout.Space(5);
+        GUILayout.Space(5);
 
-		GUILayout.Label("Load a sound...", skin.customStyles[6]);
+        GUILayout.Label("Load a sound...", skin.customStyles[6]);
 
-		GUILayout.EndHorizontal();
+        GUILayout.EndHorizontal();
 
         GUILayout.EndArea();
     }
-	
+
 
     private static void Options()
     {
@@ -260,20 +260,22 @@ public static class MainGUI
         {
             var currRect = new Rect(scrollRect.x, scrollRect.y + i * 35f, scrollRect.width, 35f);
 
-			var msg = "No info...";
+            var msg = "No info...";
 
-			if(allNodes[i] != null)
-			{
-				var tmpNode = allNodes[i].GetComponent<RecordingNode>();
-				msg = tmpNode.data.Author + ": " + tmpNode.data.Latitude + ", " + tmpNode.data.Longitude;
-			}
+            if (allNodes[i] != null)
+            {
+                var tmpNode = allNodes[i].GetComponent<RecordingNode>();
+                if (tmpNode != null)
+                    msg = tmpNode.data.Author + ": " + tmpNode.data.Latitude + ", " + tmpNode.data.Longitude;
+
+            }
 
 
             if (GUI.Button(currRect, msg))
             {
-				var recNode = allNodes[i].GetComponent<RecordingNode>();
-				var tmpData = recNode.data;
-				currNodeOnDisplay = tmpData;
+                var recNode = allNodes[i].GetComponent<RecordingNode>();
+                var tmpData = recNode.data;
+                currNodeOnDisplay = tmpData;
                 currNodeObj = allNodes[i];
             }
         }
@@ -292,11 +294,11 @@ public static class MainGUI
 
             var data = currNodeOnDisplay;
 
-			var texRect = new RectOffset(5,5,5,5).Remove(dispRect);
+            var texRect = new RectOffset(5, 5, 5, 5).Remove(dispRect);
 
-			GUI.color = 0.6f * Color.white;
-			GUI.DrawTexture(texRect, currNodeObj.GetComponent<RecordingNode>().currPic, ScaleMode.ScaleAndCrop);
-			GUI.color = Color.white;
+            GUI.color = 0.6f * Color.white;
+            GUI.DrawTexture(texRect, currNodeObj.GetComponent<RecordingNode>().currPic, ScaleMode.ScaleAndCrop);
+            GUI.color = Color.white;
 
             GUILayout.BeginArea(contentRect);
 

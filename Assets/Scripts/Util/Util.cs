@@ -27,7 +27,11 @@ public static class Util
             Debug.Log(String.Format("[{0}] {1}", url, www.error));
 
             //hack to get out of loading screen
-            GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(Color.clear);
+            try
+            {
+                GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(Color.clear);
+            }
+            catch { }
 
         }
         else
@@ -80,12 +84,15 @@ public static class Util
 
         // create new loader parented to EchoscapesManager
         var loader = new GameObject(lon + ", " + lat + " [" + tile + "]");
+        //loader.transform.parent = GameObject.FindWithTag("SceneRoot").transform;
         loader.tag = "EchoscapeTile";
 
         // set up loading parameters
         var request = loader.AddComponent<EchoscapesLoader>();
         request.map = map;
         request.requestArea = new RequestArea { lat = lat, lon = lon, tile = tile };
+
+		request.BuildFromServer();
     
     }
 

@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 public class Navigation : MonoBehaviour
 {
-    bool loaded;
-    List<GameObject> textObjs;
+    public bool loaded;
+    public List<GameObject> textObjs;
     //Vector3 lastCamFor;
     //Vector3 lastCamPos;
     private GameObject textObjTemp;
-    private GameObject player;
+    public GameObject player;
 
     public List<MapWayModel> Ways { get; set; }
 	public Material signMat;
-    private GameObject streetCam;
+    public GameObject streetCam;
     public bool offline = false;
 
     // Use this for initialization
@@ -45,9 +45,26 @@ public class Navigation : MonoBehaviour
         //    lastCamPos == Camera.main.transform.position)
         //    return;
 
-        foreach(var t in textObjs)
+
+        if(textObjs == null)
+		{
+			loaded = false;
+			return;
+		}
+		if (streetCam == null)
+		{
+			streetCam = GameObject.Find("StreetCam");
+			return;
+		}
+
+
+		foreach(var t in textObjs)
         {
-            var d = Vector3.Distance(t.transform.position, streetCam.transform.position);
+
+			if(t == null)
+				continue;
+
+			var d = Vector3.Distance(t.transform.position, streetCam.transform.position);
 
             d /= 10f;
             d = Mathf.Pow(1f/d, 2f);

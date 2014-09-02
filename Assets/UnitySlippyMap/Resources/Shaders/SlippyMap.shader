@@ -20,11 +20,11 @@ struct Input {
 
 void surf (Input IN, inout SurfaceOutput o) {
 	fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
-	float a = 1f - pow(c.r, 2f);
+	float a = 1.0 - pow(c.r, 2.0);
 
 	o.Albedo = _Color.rgb;
 	o.Alpha = a * _Color.a;
-	o.Emission = 1f - 0.8f *_Color.r;
+	o.Emission = 1.0 - 0.8 *_Color.r;
 
 }
 ENDCG

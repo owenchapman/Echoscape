@@ -30,8 +30,6 @@ public class NodeFilter : MonoBehaviour
     void Update()
     {
         audioNodes = GameObject.FindGameObjectsWithTag("AudioNode") as GameObject[];
-
-
     }
 
     public void FilterNodes(string searchString)

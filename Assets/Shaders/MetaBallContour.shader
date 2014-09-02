@@ -25,7 +25,7 @@ SubShader {
 	{
 		float4 pos : POSITION;
 		float2 uv  : TEXCOORD0;
-		float4 projPos;
+		float4 projPos : COLOR0;
 	};
 
 	sampler2D _OriginalTex;
@@ -40,7 +40,7 @@ SubShader {
 		return o;
 	}
 
-	float4 frag (v2f i) : COLOR
+	float4 frag (v2f i) : COLOR0
 	{
 		i.projPos /= i.projPos.w;
 

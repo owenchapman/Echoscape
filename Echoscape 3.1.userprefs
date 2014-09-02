@@ -1,8 +1,13 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../../../../2014/14MP003 Simuloid 3d Printing/Workspace/3DPrintingApp/Assets/Scripts/ObjectEdit.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Scene/LoadAudioFile.cs">
     <Files>
-      <File FileName="../../../../2014/14MP003 Simuloid 3d Printing/Workspace/3DPrintingApp/Assets/Scripts/ObjectEdit.cs" Line="26" Column="1" />
+      <File FileName="Assets/Scripts/Load/EchoscapesLoader.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GUI/ScapeSelector.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Util/Util.cs" Line="82" Column="78" />
+      <File FileName="Assets/Scripts/Load/AudioBuilder.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Scene/LoadAudioFile.cs" Line="23" Column="2" />
+      <File FileName="Assets/Scripts/Util/LoadTest.cs" Line="38" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

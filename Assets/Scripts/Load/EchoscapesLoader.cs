@@ -7,13 +7,14 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
+[Serializable]
 public struct LatLonAlt
 {
     public float Lat { get; set; }
     public float Lon { get; set; }
     public float Alt { get; set; }
 }
-
+[Serializable]
 public class DataUrls
 {
     public string coreUrl;
@@ -21,14 +22,14 @@ public class DataUrls
     public string terrainData;
     public string wayData;
 }
-
+[Serializable]
 public class DownloadedData
 {
     public string audio;
     public string terrain;
     public byte[] ways; // binary data
 }
-
+[Serializable]
 public class ConstructedData
 {
     public GameObject recNodes;
@@ -45,7 +46,7 @@ public class RequestArea
     public float tile;
 }
 
-enum CompletetionState
+public enum CompletetionState
 {
     Starting,
     Downloading,
@@ -57,11 +58,11 @@ enum CompletetionState
 
 public class EchoscapesLoader : MonoBehaviour
 {
-    private bool init = false;
+    public bool init = false;
 
-    private CompletetionState audioState;
-    private CompletetionState terrainState;
-    private CompletetionState wayState;
+    public CompletetionState audioState;
+    public CompletetionState terrainState;
+	public CompletetionState wayState;
 
     public DataUrls urls = new DataUrls();
     public DownloadedData dlData = new DownloadedData();
@@ -97,75 +98,153 @@ public class EchoscapesLoader : MonoBehaviour
         urls.dataFolder = "file://" + Application.dataPath + "/DefaultData/";
 #else
         //urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_v1.php?lat={0}&lon={1}";
-		//single tile php call
-		//urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_singletile.php?lat={0}&lon={1}";
+        //single tile php call
+        //urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_singletile.php?lat={0}&lon={1}";
         urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_singletile_REALDB.php?lat={0}&lon={1}";
-		//urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_singletile_random.php?lat={0}&lon={1}";
-		urls.dataFolder = "http://audio-mobile.org/echoscapes/data/";
+        //urls.coreUrl = "http://audio-mobile.org/echoscapes/echobase_singletile_random.php?lat={0}&lon={1}";
+        urls.dataFolder = "http://audio-mobile.org/echoscapes/data/";
 #endif
     }
 
-    void Update()
-    {
-        // if we've done everything exit
-        if (init && (audioState == CompletetionState.Done && terrainState == CompletetionState.Done &&
-            wayState == CompletetionState.Done))
-        {
-            return;
-        }
+	IEnumerator BuildFromFileLoop()
+	{
+		yield return new WaitForSeconds(1f);
+		this.terrainState = CompletetionState.Downloaded;
+		this.audioState = CompletetionState.Downloaded;
+		this.wayState = CompletetionState.Downloaded;
+		bool success = false;
+		while(!success)
+		{
+			// if we've done everything exit
+			if (init && (audioState == CompletetionState.Done && terrainState == CompletetionState.Done &&
+			             wayState == CompletetionState.Done))
+			{
+				success = true;
+				yield return 0;
+			}
+			
+			
+			if (terrainState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin terrain coroutine");
+				ConstructTerrain();
+			}
+			
+			if (terrainState == CompletetionState.Done && audioState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin audio coroutine");
+				// construct recording nodes (require to be snapped to terrain later)
+				ConstructAudio(); // audio will be 'Waiting' when done				
+			}
+			
+			
+			if (terrainState == CompletetionState.Done && wayState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin ways coroutine");
+				// ways may be constructed as soon as terrain is finished
+				ConstructWays();
+				
+				var newPlayer = GameObject.FindGameObjectWithTag("Player");
+				
+				//construct a player object if one does not exist in the scene
+				if (newPlayer == null)
+				{
+					newPlayer = Instantiate(Resources.Load("Prefab/Player") as GameObject) as GameObject;
+					newPlayer.transform.localScale *= 1f;
+				}
+				
+				var pos = conData.terrain.collider.bounds.center;
+				pos.y = Util.GetTerrainHeightAt(pos) + 0.01f;
+				newPlayer.transform.position = pos;			
+			}
+			
+			yield return 0;
+		}
+	}
 
-        // otherwise check if urls/request area are set so we may begin
-        if (!init && requestArea != null &&
-               (audioState == CompletetionState.Starting &&
-                terrainState == CompletetionState.Starting &&
-                wayState == CompletetionState.Starting))
-        {
-            // begin downloads
-            BeginRequestArea();
-            init = true;
-        }
+	IEnumerator BuildFromServerLoop()
+	{
+		yield return new WaitForSeconds(1f);
 
-        if (!init)
-            return;
-            
+		bool success = false;
+		while(!success)
+		{
+			// if we've done everything exit
+			if (init && (audioState == CompletetionState.Done && terrainState == CompletetionState.Done &&
+			             wayState == CompletetionState.Done))
+			{
+				success = true;
+				yield return 0;
+			}
+			
+			// otherwise check if urls/request area are set so we may begin
+			if (!init && requestArea != null &&
+			    (audioState == CompletetionState.Starting &&
+			 terrainState == CompletetionState.Starting &&
+			 wayState == CompletetionState.Starting))
+			{
+				// begin downloads
+				BeginRequestArea();
+				init = true;
+			}
+			
+			if (!init)
+			{
+				yield return 0;
+			}
+			
+			
+			if (terrainState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin terrain coroutine");
+				ConstructTerrain();
+			}
+			
+			if (terrainState == CompletetionState.Done && audioState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin audio coroutine");
+				// construct recording nodes (require to be snapped to terrain later)
+				ConstructAudio(); // audio will be 'Waiting' when done
+				
+			}
+			
+			
+			if (terrainState == CompletetionState.Done && wayState == CompletetionState.Downloaded)
+			{
+				Debug.Log("begin ways coroutine");
+				// ways may be constructed as soon as terrain is finished
+				ConstructWays();
+				
+				var newPlayer = GameObject.FindGameObjectWithTag("Player");
+				
+				//construct a player object if one does not exist in the scene
+				if (newPlayer == null)
+				{
+					newPlayer = Instantiate(Resources.Load("Prefab/Player") as GameObject) as GameObject;
+					newPlayer.transform.localScale *= 1f;
+				}
+				
+				var pos = conData.terrain.collider.bounds.center;
+				pos.y = Util.GetTerrainHeightAt(pos) + 0.01f;
+				newPlayer.transform.position = pos;
+				
+			}
 
-        if (terrainState == CompletetionState.Downloaded)
-        {
-            Debug.Log("begin terrain coroutine");
-            ConstructTerrain();
-        }
-        
-        if (terrainState == CompletetionState.Done && audioState == CompletetionState.Downloaded)
-        {
-            Debug.Log("begin audio coroutine");
-            // construct recording nodes (require to be snapped to terrain later)
-            ConstructAudio(); // audio will be 'Waiting' when done
+			yield return 0;
+		}
+	}
 
-        }
+	public void BuildFromServer()
+	{
+		StartCoroutine(BuildFromServerLoop());
+	}
 
+	public void BuildFromFile(DownloadedData data)
+	{
+		this.dlData = data;
+		StartCoroutine(BuildFromFileLoop());
+	}
 
-
-        if (terrainState == CompletetionState.Done && wayState == CompletetionState.Downloaded)
-        {
-            Debug.Log("begin ways coroutine");
-            // ways may be constructed as soon as terrain is finished
-            ConstructWays();
-
-            var newPlayer = GameObject.FindGameObjectWithTag("Player"); 
-
-            //construct a player object if one does not exist in the scene
-            if (newPlayer == null)
-            {
-                newPlayer = Instantiate(Resources.Load("Prefab/Player") as GameObject) as GameObject;
-                newPlayer.transform.localScale *= 1f;             
-            }
-
-            var pos = conData.terrain.collider.bounds.center;
-            pos.y = Util.GetTerrainHeightAt(pos) + 0.01f;
-            newPlayer.transform.position = pos;   
-
-        }
-    }
 
     void BeginRequestArea()
     {
@@ -174,9 +253,13 @@ public class EchoscapesLoader : MonoBehaviour
 
         var request = string.Format(urls.coreUrl, lat, lon);
 
-        GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(0.8f * Color.white);
+        try
+        {
+            GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(0.8f * Color.white);
+        }
+        catch { }
 
-        
+
         Debug.Log("Request area: " + request);
         StartCoroutine(Util.GetUrlContents(request, CompleteRequestArea));
 
@@ -313,12 +396,16 @@ public class EchoscapesLoader : MonoBehaviour
         //hack
         GameObject.FindGameObjectWithTag("NodeManager").GetComponent<NodeFilter>().ResetToCompleteList();
         GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(Color.clear);
-		//play the title track
-		GameObject.FindGameObjectWithTag("SFX").audio.Play ();
+        //play the title track
+        try
+        {
+            GameObject.FindGameObjectWithTag("SFX").audio.Play();
+        }
+        catch { }
 
-//        var go = GameObject.Instantiate(Resources.Load("Prefabs/HexTerrain")) as GameObject;
-//        var hex = go.GetComponent<Hexes2>();
-//        hex.terrain = conData.terrain;
+        //        var go = GameObject.Instantiate(Resources.Load("Prefabs/HexTerrain")) as GameObject;
+        //        var hex = go.GetComponent<Hexes2>();
+        //        hex.terrain = conData.terrain;
     }
 
     #endregion

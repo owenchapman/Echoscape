@@ -40,7 +40,7 @@ Shader "Custom/WorldLonLat" {
 			float x = (IN.worldPos.x - _OrgX) / _Scale;
 			float y = (IN.worldPos.z - _OrgY) /  _Scale;
 			float lon = degrees(x);
-			float lat = 2f*atan(exp(y)) - (0.5f * radians(180f));
+			float lat = 2*atan(exp(y)) - (0.5 * 3.141592);
 			lat = degrees(lat);
 
 			//set scale dependent quandrant

@@ -41,26 +41,29 @@ public class AudioLoop : MonoBehaviour
         }
 
         //set start of loop
-        if (Vector3.Distance(this.transform.position, playerObj.transform.position) < 5 && this.audio.isPlaying)
+        if (playerObj != null)
         {
-            if (Input.GetKeyDown(KeyCode.L) || recState == RecordState.Initialize)
+            if (Vector3.Distance(this.transform.position, playerObj.transform.position) < 5 && this.audio.isPlaying)
             {
-                Debug.Log("setting");
-                clip[0] = audioComp.timeSamples;
-                recState = RecordState.Recording;
-            }
+                if (Input.GetKeyDown(KeyCode.L) || recState == RecordState.Initialize)
+                {
+                    Debug.Log("setting");
+                    clip[0] = audioComp.timeSamples;
+                    recState = RecordState.Recording;
+                }
 
-            //set end of loop and play
-            if (Input.GetKeyUp(KeyCode.L) || recState == RecordState.Finalize)
-            {
-                Debug.Log("Finalizing");
+                //set end of loop and play
+                if (Input.GetKeyUp(KeyCode.L) || recState == RecordState.Finalize)
+                {
+                    Debug.Log("Finalizing");
 
-                clip[1] = audioComp.timeSamples;
-                audioComp.timeSamples = clip[1];
+                    clip[1] = audioComp.timeSamples;
+                    audioComp.timeSamples = clip[1];
 
-                audioComp.maxDistance = 1000f;
+                    audioComp.maxDistance = 1000f;
 
-                recState = RecordState.Stopped;
+                    recState = RecordState.Stopped;
+                }
             }
         }
 
