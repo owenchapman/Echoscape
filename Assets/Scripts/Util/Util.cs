@@ -713,6 +713,21 @@ public static class Util
         return new Vector3((float)mouseLatLon[0], toProject.y, (float)mouseLatLon[1]);
     }
 
+	public static Vector3 Mercator2LonLat2(Vector3 toProject, Map map, double[] center)
+	{
+		double[] displacementMeters = new double[2] { toProject.x / map.RoundedScaleMultiplier, toProject.z / map.RoundedScaleMultiplier };
+		double[] centerMeters = new double[2] { map.CenterEPSG900913[0], map.CenterEPSG900913[1] };
+		centerMeters[0] += displacementMeters[0];
+		centerMeters[1] += displacementMeters[1];
+		
+		var xy2coord = map.epsg900913ToWGS84Transform;
+		double[] mouseLatLon = xy2coord.Transform(centerMeters);
+		mouseLatLon[0] += center[0] - map.CenterWGS84[0];
+		mouseLatLon[1] += center[1] - map.CenterWGS84[1];
+		
+		return new Vector3((float)mouseLatLon[0], toProject.y, (float)mouseLatLon[1]);
+	}
+
     public static Vector3 Mercator2LonLat(Vector3 toProject, float pScale)
     {
         //assumes the equator is on the x axis, and 0 longitude is on y axis.

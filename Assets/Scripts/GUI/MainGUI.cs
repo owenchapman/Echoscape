@@ -169,7 +169,7 @@ public static class MainGUI
 
     public static void RecordGUI()
     {
-        var recordRect = new Rect(0, 0, 300, 85);
+        var recordRect = new Rect(0, 0, 300, 125);
         var offset = new RectOffset(5, 5, 5, 5);
         var contentRect = offset.Remove(recordRect);
 
@@ -178,7 +178,7 @@ public static class MainGUI
         GUILayout.BeginHorizontal();
 
 
-        var timeCounter = "record what you hear...";
+        var timeCounter = "record what you hear";
 
         //        audioRecorder.loop = GUILayout.Toggle(audioRecorder.loop, "Loop");
         //        audioRecorder.autoName = GUILayout.Toggle(audioRecorder.autoName, "Auto Name");
@@ -197,20 +197,23 @@ public static class MainGUI
         GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
-
         GUILayout.BeginHorizontal();
         //upload a user sound
         if (GUILayout.Button("", skin.customStyles[11]))
-        {
             audioFileLoader.LoadFile();
-        }
-
+        
         GUILayout.Space(5);
-
-        GUILayout.Label("Load a sound...", skin.customStyles[6]);
-
+        GUILayout.Label("Load a sound or scene", skin.customStyles[6]);
         GUILayout.EndHorizontal();
 
+		GUILayout.Space(10);		
+		GUILayout.BeginHorizontal();
+		//upload a user sound
+		if (GUILayout.Button("", skin.customStyles[12]))		
+			audioFileLoader.SaveFile();
+		GUILayout.Space(5);		
+		GUILayout.Label("Save the current scene", skin.customStyles[6]);		
+		GUILayout.EndHorizontal();
         GUILayout.EndArea();
     }
 
@@ -335,8 +338,16 @@ public static class MainGUI
         audioRecorder.defaultDir = GUILayout.TextArea(audioRecorder.defaultDir, skin.customStyles[5]);
         audioFileLoader.defaultDir = audioRecorder.defaultDir;
 
+		GUILayout.Space(10);
+		GUILayout.Label("User name: ");
+		Global.userName = GUILayout.TextArea(Global.userName, skin.customStyles[5]);
 
-        GUILayout.Label("");
+		GUILayout.Space(10);
+		GUILayout.Label("Location: ");
+		Global.location = GUILayout.TextArea(Global.location, skin.customStyles[5]);
+		
+		
+		GUILayout.Space(10);
         GUILayout.Label("Audio Node Effect Range: ");
         audioRange = GUILayout.HorizontalSlider(audioRange, 0.1f, 10f);
 

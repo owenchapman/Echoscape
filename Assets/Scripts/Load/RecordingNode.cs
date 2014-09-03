@@ -47,20 +47,12 @@ public class RecordingNode : MonoBehaviour
     private float adjust = 1f;
     private Color guiColor;
 
-	void Awake()
-	{
-		var mFilter = this.GetComponent<MeshFilter>();
-		var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		if(mFilter.sharedMesh == null)
-			mFilter.sharedMesh = sphere.GetComponent<MeshFilter>().sharedMesh;
-
-		Destroy (sphere);
-	}
 
     // Use this for initialization
     void Start()
     {
-        progress = Progress.None;
+
+		progress = Progress.None;
         samples = new float[vizCount];
         orgScale = this.transform.localScale;
         var guiManager = GameObject.FindGameObjectWithTag("GUIManager");
@@ -83,27 +75,19 @@ public class RecordingNode : MonoBehaviour
             //data.SoundURL = "http://www.audio-mobile.org";
         }
 
-        if (this.tag == "UserSounds")
-        {
-            data.SoundURL = localWWW;
-            data.Position = this.transform.position;
-            StartCoroutine(BeginLoading());
-            data.Author = "Current Author";
-            data.Info1 = "temp";//audio.clip.name;
-            data.Location = "location for user clips coming soon...";
-        }
-
         this.name = data.Author + " :" + data.Date;
-
         guiColor = Color.clear;
 
-
+		
+		Debug.Log ("Node: " + data.Author+ ": " + this.transform.position + ": " + data.Position);
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (data.SoundURL != null)
+
+		if (data.SoundURL != null)
             this.light.color = 0.75f * this.renderer.material.color;
 
         if (player == null)
@@ -148,7 +132,6 @@ public class RecordingNode : MonoBehaviour
     void OnGUI()
     {
         GUI.skin = nodeSkin;
-
         GUI.color = guiColor;
 
         //if(!dispGUI)
@@ -253,17 +236,19 @@ public class RecordingNode : MonoBehaviour
             loopValRight = Mathf.Max(loopValLeft + 10, loopValRight);
         }
 
+        if (audio.clip != null)
+        {
+            var prog = ((float)(audio.timeSamples - leftClip) / audio.clip.samples) * Screen.width;
+            var progRect = new Rect(loopValLeft, trackRect.y, prog, trackRect.height);
 
-        var prog = ((float)(audio.timeSamples - leftClip) / audio.clip.samples) * Screen.width;
-        var progRect = new Rect(loopValLeft, trackRect.y, prog, trackRect.height);
+            GUI.Box(trackRect, "", nodeSkin.customStyles[4]);
 
-        GUI.Box(trackRect, "", nodeSkin.customStyles[4]);
 
-        if (audio.isPlaying)
-            GUI.Box(progRect, "", nodeSkin.customStyles[8]);
+            if (audio.isPlaying)
+                GUI.Box(progRect, "", nodeSkin.customStyles[8]);
+        }
 
         GUI.Box(barRect, "", nodeSkin.customStyles[3]);
-
 
     }
 
@@ -302,7 +287,6 @@ public class RecordingNode : MonoBehaviour
     {
         while (true)
         {
-
             if (this.audio.isPlaying)
             {
                 float[] audioSamplesL = audio.GetSpectrumData(1024, 0, FFTWindow.BlackmanHarris);
@@ -347,8 +331,11 @@ public class RecordingNode : MonoBehaviour
     IEnumerator BeginLoading()
     {
         progress = Progress.Loading;
-        www = new WWW(data.SoundURL);
+        if (data.SoundURL == null)
+            data.SoundURL = localWWW;
 
+        www = new WWW(data.SoundURL);
+        
         Debug.Log("Downloading sound: " + data.SoundURL);
 
         while (!www.isDone)
@@ -423,10 +410,7 @@ public class RecordingNode : MonoBehaviour
         }
         else
         {
-            Debug.Log("error in stream");
-
-            //temp error visual
-            this.renderer.material.color = errorCol;
+            Debug.Log("error in image stream");
         }
 
         progress = Progress.Complete;
@@ -455,6 +439,7 @@ public class RecordingNode : MonoBehaviour
 
     void OnMouseDown()
     {
+        
         if (progress == Progress.None && Vector3.Distance(player.transform.position, this.data.Position) < 10f)
         {
             StartCoroutine(BeginLoading());

@@ -89,7 +89,9 @@ public class EchoscapesLoader : MonoBehaviour
 
     void Start()
     {
-        audioState = CompletetionState.Starting;
+		Global.mapCenter = new double[2]{map.CenterWGS84[0], map.CenterWGS84[1]};
+
+		audioState = CompletetionState.Starting;
         terrainState = CompletetionState.Starting;
         wayState = CompletetionState.Starting;
 
@@ -236,13 +238,23 @@ public class EchoscapesLoader : MonoBehaviour
 
 	public void BuildFromServer()
 	{
-		StartCoroutine(BuildFromServerLoop());
+        try
+        {
+            GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(0.8f * Color.white);
+        }
+        catch { }
+        StartCoroutine(BuildFromServerLoop());
 	}
 
 	public void BuildFromFile(DownloadedData data)
 	{
 		this.dlData = data;
-		StartCoroutine(BuildFromFileLoop());
+        try
+        {
+            GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(0.8f * Color.white);
+        }
+        catch { }
+        StartCoroutine(BuildFromFileLoop());
 	}
 
 
@@ -253,11 +265,7 @@ public class EchoscapesLoader : MonoBehaviour
 
         var request = string.Format(urls.coreUrl, lat, lon);
 
-        try
-        {
-            GameObject.FindGameObjectWithTag("GUIManager").GetComponent<WindowManager>().GUIAlphaLerp(0.8f * Color.white);
-        }
-        catch { }
+
 
 
         Debug.Log("Request area: " + request);
@@ -356,7 +364,6 @@ public class EchoscapesLoader : MonoBehaviour
     void TerrainDownloadComplete(string xmlData)
     {
         Debug.Log("downloaded terrain data package");
-        Debug.Log("terrain: " + xmlData);
         dlData.terrain = xmlData;
         terrainState = CompletetionState.Downloaded;
     }

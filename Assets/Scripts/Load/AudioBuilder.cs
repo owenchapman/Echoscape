@@ -62,8 +62,17 @@ public class AudioBuilder
 
             //data.Position = Util.LonLat2Mercator(new Vector3(data.Longitude, 0f, data.Latitude), pScale);
             //data.Position += moveVec;
-            data.Position = Util.LonLat2Mercator2(new Vector3(data.Latitude, 0f, data.Longitude), map);
-            data.Position += new Vector3(0f, Util.GetTerrainHeightAt(data.Position) + 0.5f, 0f);
+
+			data.Position = Util.LonLat2Mercator2(new Vector3(data.Latitude, 0f, data.Longitude), map);
+			data.Position += new Vector3(0f, Util.GetTerrainHeightAt(data.Position) + 0.5f, 0f);
+
+			if(data.UserId == "1001")
+			{
+				Debug.Log ("Lat: " + data.Latitude + ": " + "Lon: " + data.Longitude);
+				Debug.Log (data.Position);
+			}
+
+
             //avg += data.Position;
 
             allNodeData.Add(data);
