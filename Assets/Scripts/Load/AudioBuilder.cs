@@ -94,11 +94,11 @@ public class AudioBuilder
             node.transform.localScale *= 100f*map.RoundedScaleMultiplier;
             node.transform.parent = conData.recNodes.transform;
             recordingNode.data = data;
+			recordingNode.fileName = data.SoundURL;
         }
 
         completedCallback();
 
-        //hack to repopulate filter list
     }
 
 }

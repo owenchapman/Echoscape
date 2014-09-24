@@ -118,7 +118,7 @@ class o5mParser
 
     private bool ValidateHeader(BinaryReader br)
     {
-        // expected header: ff e0 046f 356d 32
+        // expected header: ff e0 046f 356d 32 
         //     reset flag --^^ ^^^^^^^^^^^^^^^-- header
         if (br.ReadBytes(7).SequenceEqual(new byte[] { 0xFF, 0xE0, 0x04, 0x6F, 0x35, 0x6D, 0x32 }))
             return true;
@@ -273,9 +273,14 @@ class o5mParser
                 var entry = ParseNumberAndTrackBytes(br, false, out bytes);
                 bytesSoFar += bytes;
 
-                var tag = stringTable[stringTable.Count - Convert.ToInt32(entry)];
-                var splitTag = tag.Split('\0');
-                tags[splitTag[0]] = splitTag[1];
+                try
+                {
+                    var tag = stringTable[stringTable.Count - Convert.ToInt32(entry)];
+                    var splitTag = tag.Split('\0');
+                    tags[splitTag[0]] = splitTag[1];
+                }
+                catch { Debug.Log("Something happened while parsing tags"); }
+                
             }
         }
 
@@ -303,11 +308,16 @@ class o5mParser
             header.changeset = ApplyDelta(ParseNumberAndTrackBytes(br, true, out bytesRead), "nodechangeset");
             bytes += bytesRead;
 
-            var authorInfo = ParseUIDStringAndTrackBytes(br, out bytesRead).Split('\0'); // [0] uid, [1] user name
+            var res = ParseUIDStringAndTrackBytes(br, out bytesRead);
             bytes += bytesRead;
 
-            header.author.id = authorInfo[0];
-            header.author.name = authorInfo[1];
+            if (res != null)
+            {
+                var authorInfo = res.Split('\0'); // [0] uid, [1] user name
+
+                header.author.id = authorInfo[0];
+                header.author.name = authorInfo[1];
+            }
             //}
         }
 
@@ -367,38 +377,42 @@ class o5mParser
 
     private string ParseUIDStringAndTrackBytes(BinaryReader br, out int bytes)
     {
-        var byteStr = new List<byte>();
-        bytes = 0;
-        int bytesRead = 0;
-
-        if (br.PeekChar() != 0x00) // table entry
+        try
         {
-            var entry = ParseNumberAndTrackBytes(br, false, out bytes);
-            return stringTable[stringTable.Count - Convert.ToInt32(entry)];
-        }
+            var byteStr = new List<byte>();
+            bytes = 0;
+            int bytesRead = 0;
 
-        br.ReadByte(); // 0x00
-        bytes++;
+            if (br.PeekChar() != 0x00) // table entry
+            {
+                var entry = ParseNumberAndTrackBytes(br, false, out bytes);
+                return stringTable[stringTable.Count - Convert.ToInt32(entry)];
+            }
 
-        byte curr;
-        var uid = ParseNumberAndTrackBytes(br, false, out bytesRead).ToString();
-        bytes += bytesRead;
-
-        br.ReadByte(); // 0x00
-        bytes++;
-
-        while ((curr = br.ReadByte()) != 0x00)
-        {
-            byteStr.Add(curr);
+            br.ReadByte(); // 0x00
             bytes++;
+
+            byte curr;
+            var uid = ParseNumberAndTrackBytes(br, false, out bytesRead).ToString();
+            bytes += bytesRead;
+
+            br.ReadByte(); // 0x00
+            bytes++;
+
+            while ((curr = br.ReadByte()) != 0x00)
+            {
+                byteStr.Add(curr);
+                bytes++;
+            }
+            bytes++; // to catch the 0x00
+
+            var uidString = uid + '\0' + Encoding.UTF8.GetString(byteStr.ToArray(), 0, byteStr.Count);
+            if (!stringTable.Contains(uidString))
+                stringTable.Add(uidString);
+
+            return uidString;
         }
-        bytes++; // to catch the 0x00
-
-        var uidString = uid + '\0' + Encoding.UTF8.GetString(byteStr.ToArray(), 0, byteStr.Count);
-        if (!stringTable.Contains(uidString))
-            stringTable.Add(uidString);
-
-        return uidString;
+        catch { bytes = 0; return null; }
     }
 
     private string ParseUIDString(BinaryReader br)

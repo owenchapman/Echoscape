@@ -47,8 +47,6 @@ public class WindowManager : MonoBehaviour
         guiRects = new Rect[rTextures.Length];
         guiColor = Color.clear;
 
-
-
         fullRect = new Rect(0, 0, Screen.width, Screen.height);
         //Initialize controllable components
         MainGUI.winHeight = winHeight;

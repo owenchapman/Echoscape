@@ -38,7 +38,10 @@ public class LoadAudioFile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+		if(Input.GetKeyDown (KeyCode.X))
+			LoadEffectParamters();
+		if(Input.GetKeyDown (KeyCode.V))
+			WriteEffectParamtersToXML();
     }
 
     public void LoadFile()
@@ -69,13 +72,16 @@ public class LoadAudioFile : MonoBehaviour
 
 	void Serialize(string path)
 	{
+
+		//Grab all the effect controllers in the scene and create XML entries for each parameter in dlData.audio.
+		WriteEffectParamtersToXML();
+
 		DownloadedData obj = GameObject.FindGameObjectWithTag("EchoscapeTile").GetComponent<EchoscapesLoader>().dlData;
 		IFormatter formatter = new BinaryFormatter();
 		Stream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
 		formatter.Serialize(stream, obj);
 		stream.Close();
-		
-		
+			
 		var debug = Path.Combine(defaultDir, "debug.xml");
 		File.WriteAllText(debug, obj.audio.ToString());
 		
@@ -130,6 +136,145 @@ public class LoadAudioFile : MonoBehaviour
         winManager.forceFreeze = false;
     }
 
+	public void LoadEffectParamters()
+	{
+		//append node to Node XML
+		var loader = GameObject.FindGameObjectWithTag("EchoscapeTile").GetComponent<EchoscapesLoader>();
+		var audioNodes = GameObject.FindGameObjectsWithTag("AudioNode");
+		Debug.Log ("about to load audio parameter data");
+		if (loader != null)
+		{
+			var xmlData = loader.dlData.audio;
+			
+			if (xmlData != null)
+			{
+				var doc = new XmlDocument();
+				doc.LoadXml(xmlData);
+				
+				if(audioNodes != null)
+				{
+					for(int i = 0; i < audioNodes.Length; i++)
+					{
+						var fileName = audioNodes[i].GetComponent<RecordingNode>().data.SoundURL;
+						var query = String.Format ("/echobase/audio/marker[@soundfile='{0}']", fileName);
+						
+						XmlNode xmlNode = doc.SelectSingleNode(query);
+						
+						if(xmlNode != null)
+						{
+							//append audio parameter
+							var controllers = audioNodes[i].GetComponent<FXGui>().controllers;
+							
+							if(controllers != null)
+							{
+								foreach(EffectController c in controllers)
+								{
+									//get child called c.name
+									foreach(XmlNode ec in xmlNode.ChildNodes)
+									{
+										if(ec.Name == c.name)
+										{
+											//iterate through attributes in child and set the parameters in the audio filter
+
+											for (int j = 0; j < c.parameters.Length; j ++)
+											{
+												var p = c.parameters[j];
+												p.value = float.Parse (ec.Attributes[p.ParameterName].Value);
+
+												c.SetParamValue(j, p.value);
+											}
+
+											//special case for enabling
+											var onOff = bool.Parse (ec.Attributes["Enabled"].Value);
+											var enabled = c.AudioFilter.GetType().GetProperty("enabled");
+											enabled.SetValue(c.AudioFilter, onOff, null);
+											c.mute = onOff;
+											break;
+										}
+									}
+
+								}
+							}
+						}
+					}
+				}
+
+			}
+		}	
+
+	}
+
+	private void WriteEffectParamtersToXML()
+	{
+		//append node to Node XML
+		var loader = GameObject.FindGameObjectWithTag("EchoscapeTile").GetComponent<EchoscapesLoader>();
+		var audioNodes = GameObject.FindGameObjectsWithTag("AudioNode");
+		Debug.Log ("about to save audio parameter data");
+		if (loader != null)
+		{
+			var xmlData = loader.dlData.audio;
+
+			if (xmlData != null)
+			{
+				var doc = new XmlDocument();
+				doc.LoadXml(xmlData);
+
+				if(audioNodes != null)
+				{
+					for(int i = 0; i < audioNodes.Length; i++)
+					{
+						var rNode = audioNodes[i].GetComponent<RecordingNode>();
+
+						if(rNode == null)
+							continue;
+			
+						var fileName = rNode.data.SoundURL;
+						var query = String.Format ("/echobase/audio/marker[@soundfile='{0}']", fileName);
+
+						XmlNode xmlNode = doc.SelectSingleNode(query);
+						
+						if(xmlNode != null)
+						{
+
+							while(xmlNode.ChildNodes.Count != 0)
+							{
+								xmlNode.RemoveChild(xmlNode.FirstChild);
+							}
+							//append audio parameter
+							var controllers = audioNodes[i].GetComponent<FXGui>().controllers;
+
+							if(controllers != null)
+							{
+								foreach(EffectController c in controllers)
+								{
+									var currEffect = doc.CreateElement(c.name);
+									currEffect.SetAttribute("Enabled", c.mute.ToString());
+									foreach(AudioParameter p in c.parameters)
+									{
+										currEffect.SetAttribute(p.ParameterName, p.value.ToString());
+									}
+									xmlNode.AppendChild(currEffect);
+								}
+							}
+						}
+					}
+				}
+
+				//write the data back to the xml string
+				using (var stringWriter = new StringWriter())
+					using (XmlTextWriter xmlTextWriter = (XmlTextWriter)XmlWriter.Create(stringWriter))
+				{
+					xmlTextWriter.Formatting = Formatting.Indented;
+					doc.WriteTo(xmlTextWriter);
+					xmlTextWriter.Flush();
+					loader.dlData.audio = stringWriter.GetStringBuilder().ToString();
+				}
+			}
+		}
+	
+
+	}
+
     private void CreateNewAudioSource(WWW url)
     {
         var tmp = Instantiate(nodePrefab, this.transform.position, Quaternion.identity) as GameObject;
@@ -182,9 +327,10 @@ public class LoadAudioFile : MonoBehaviour
                 }
 
                 using (var stringWriter = new StringWriter())
-                using (var xmlTextWriter = XmlWriter.Create(stringWriter))
+                using (var xmlTextWriter = (XmlTextWriter) XmlWriter.Create(stringWriter))
                 {
-                    doc.WriteTo(xmlTextWriter);
+					xmlTextWriter.Formatting = Formatting.Indented;
+					doc.WriteTo(xmlTextWriter);
                     xmlTextWriter.Flush();
                     loader.dlData.audio = stringWriter.GetStringBuilder().ToString();
                 }

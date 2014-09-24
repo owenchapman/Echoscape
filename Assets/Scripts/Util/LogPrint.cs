@@ -21,7 +21,7 @@ public class LogPrint : MonoBehaviour
 		{
 		
 				Application.RegisterLogCallback (HandleLog);
-				scrollRect = new Rect (300, 12, Screen.width - 305, 100);
+				scrollRect = new Rect (300, 25, Screen.width - 305, 120);
 				fullRect = new Rect (scrollRect);
 				fullRect.height = 2 * scrollRect.height;
 				fullRect.width = scrollRect.width - 20;

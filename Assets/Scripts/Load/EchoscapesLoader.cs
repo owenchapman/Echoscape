@@ -1,4 +1,8 @@
-﻿//#define OFFLINE
+﻿//CONFIDENTIAL and COPYRIGHT 2014
+//DO NOT DISTRIBUTE
+//Daniel Hambleton 2014
+
+//#define OFFLINE
 
 using System;
 using System.Xml;
@@ -157,7 +161,11 @@ public class EchoscapesLoader : MonoBehaviour
 				
 				var pos = conData.terrain.collider.bounds.center;
 				pos.y = Util.GetTerrainHeightAt(pos) + 0.01f;
-				newPlayer.transform.position = pos;			
+				newPlayer.transform.position = pos;	
+
+				//initialize audio effect paramters
+				var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
+				audioLoader.LoadEffectParamters();
 			}
 			
 			yield return 0;

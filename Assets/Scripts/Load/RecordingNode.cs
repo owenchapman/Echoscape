@@ -29,6 +29,7 @@ public class RecordingNode : MonoBehaviour
     public float loopValLeft;
     public float loopValRight;
     public bool tempInfo = false;
+	public string fileName;
 
     //temp behaviour to load a random user image
     public Texture2D[] userPics;
@@ -46,6 +47,7 @@ public class RecordingNode : MonoBehaviour
     private int vizCount = 8;
     private float adjust = 1f;
     private Color guiColor;
+    private FXGui fxGUI;
 
 
     // Use this for initialization
@@ -77,7 +79,7 @@ public class RecordingNode : MonoBehaviour
 
         this.name = data.Author + " :" + data.Date;
         guiColor = Color.clear;
-
+        fxGUI = this.GetComponent<FXGui>();
 		
 		Debug.Log ("Node: " + data.Author+ ": " + this.transform.position + ": " + data.Position);
     }
@@ -128,6 +130,11 @@ public class RecordingNode : MonoBehaviour
         }
 
     }
+
+	public string ReturnAudioData()
+	{
+		return this.fileName;
+	}
 
     void OnGUI()
     {
@@ -250,6 +257,9 @@ public class RecordingNode : MonoBehaviour
 
         GUI.Box(barRect, "", nodeSkin.customStyles[3]);
 
+        //FXGUI
+        fxGUI.Display();
+
     }
 
     void SetLoop()
@@ -265,6 +275,7 @@ public class RecordingNode : MonoBehaviour
 
         }
     }
+	
 
     IEnumerator LerpGUIAlpha(Color target)
     {
@@ -319,6 +330,7 @@ public class RecordingNode : MonoBehaviour
             {
 
                 var tmpObj = Instantiate(vizObject, this.transform.position, Quaternion.identity) as GameObject;
+
                 //tmpObj.transform.parent = this.transform;
 
                 Destroy(tmpObj, 2f);
@@ -337,6 +349,7 @@ public class RecordingNode : MonoBehaviour
         www = new WWW(data.SoundURL);
         
         Debug.Log("Downloading sound: " + data.SoundURL);
+	
 
         while (!www.isDone)
         {

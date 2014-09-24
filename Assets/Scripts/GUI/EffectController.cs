@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
+[Serializable]
 public struct AudioParameter
 {
     public float from;
@@ -8,11 +10,11 @@ public struct AudioParameter
     public float value;
     public float initialValue;
     public string ParameterName;
-	public string nickName;
+    public string nickName;
 
     /*<summary>
     Parameter Name MUST match the name of the property you want to set (Reflection is used).
-    */
+   </summary> */
     public AudioParameter(float from, float to, float value, string parameterName, string shortName)
     {
         this.from = from;
@@ -20,20 +22,26 @@ public struct AudioParameter
         this.value = value;
         this.ParameterName = parameterName;
         this.initialValue = value;
-		this.nickName = shortName;
+        this.nickName = shortName;
     }
+
+	public void SetCurrentValue(float val)
+	{
+		this.value = val;
+	}
 }
 
+[Serializable]
 public class EffectController
 {
     public AudioParameter[] parameters;
     public Rect clientRect;
     public string name;
-    public Object AudioFilter;
+    public UnityEngine.Object AudioFilter;
 
-    private bool mute;
+    public bool mute;
 
-    public EffectController(AudioParameter[] parameters, Rect clientRect, string name, Object audioFilter)
+    public EffectController(AudioParameter[] parameters, Rect clientRect, string name, UnityEngine.Object audioFilter)
     {
         this.parameters = parameters;
         this.clientRect = clientRect;
@@ -58,10 +66,10 @@ public class EffectController
 
         for (int i = 0; i < this.parameters.Length; i++)
         {
-			GUILayout.BeginVertical();
-			parameters[i].value = GUILayout.VerticalSlider(parameters[i].value, parameters[i].to, parameters[i].from);
-			GUILayout.Label(parameters[i].nickName);
-			GUILayout.EndVertical();
+            GUILayout.BeginVertical();
+            parameters[i].value = GUILayout.VerticalSlider(parameters[i].value, parameters[i].to, parameters[i].from);
+            GUILayout.Label(parameters[i].nickName);
+            GUILayout.EndVertical();
 
             var param = this.AudioFilter.GetType().GetProperty(parameters[i].ParameterName);
             param.SetValue(this.AudioFilter, parameters[i].value, null);
@@ -92,5 +100,13 @@ public class EffectController
 
         GUILayout.EndHorizontal();
         GUILayout.EndArea();
+		
     }
+
+	public void SetParamValue(int paramIdx, float value)
+	{
+		this.parameters[paramIdx].value = value;
+		var param = this.AudioFilter.GetType().GetProperty(parameters[paramIdx].ParameterName);
+		param.SetValue(this.AudioFilter, parameters[paramIdx].value, null);
+	}
 }

@@ -138,32 +138,22 @@ public static class MainGUI
 
     private static void MapGUI()
     {
-        var loadRect = new Rect(clientRect.width / 2 - 50, clientRect.height - 35, 100, 55);
+        var loadRect = new Rect(clientRect.width - 105, 0, 100, 55);
 
         var infoRect = new Rect(0, 0, 400, 100);
-
-
-
-        var offset = new RectOffset(5, 5, 5, 15);
+        var offset = new RectOffset(5, 5, 5, 5);
         var contentRect = offset.Remove(loadRect);
 
         infoRect = offset.Remove(infoRect);
 
-
         GUILayout.BeginArea(infoRect);
-
         GUILayout.Label("To select an Echoscape, right mouse click on the map to place the marker."
                         + "\nThen, click the button at the bottom of the screen", skin.customStyles[7]);
-
         GUILayout.EndArea();
 
-        GUI.Box(loadRect, "");
-
         GUILayout.BeginArea(contentRect);
-
         if (GUILayout.Button("Load Echoscape"))
             scapeSelector.LoadTile();
-
         GUILayout.EndArea();
     }
 
