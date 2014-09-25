@@ -163,9 +163,6 @@ public class EchoscapesLoader : MonoBehaviour
 				pos.y = Util.GetTerrainHeightAt(pos) + 0.01f;
 				newPlayer.transform.position = pos;	
 
-				//initialize audio effect paramters
-				var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
-				audioLoader.LoadEffectParamters();
 			}
 			
 			yield return 0;

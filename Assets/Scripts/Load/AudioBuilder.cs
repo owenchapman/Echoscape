@@ -97,6 +97,10 @@ public class AudioBuilder
 			recordingNode.fileName = data.SoundURL;
         }
 
+        //initialize audio effect paramters
+        var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
+        audioLoader.LoadEffectParamters(null);
+
         completedCallback();
 
     }

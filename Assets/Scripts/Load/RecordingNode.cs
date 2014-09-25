@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-enum Progress
+public enum Progress
 {
     None,
     Loading,
@@ -30,6 +30,7 @@ public class RecordingNode : MonoBehaviour
     public float loopValRight;
     public bool tempInfo = false;
 	public string fileName;
+    public Progress progress;
 
     //temp behaviour to load a random user image
     public Texture2D[] userPics;
@@ -38,7 +39,6 @@ public class RecordingNode : MonoBehaviour
 
     private int leftClip;
     private int rightClip;
-    private Progress progress;
     private WWW www;
     private GameObject player;
     private Vector3 orgScale;
@@ -350,7 +350,6 @@ public class RecordingNode : MonoBehaviour
         
         Debug.Log("Downloading sound: " + data.SoundURL);
 	
-
         while (!www.isDone)
         {
 
@@ -396,6 +395,11 @@ public class RecordingNode : MonoBehaviour
 
     }
 
+    public void Load()
+    {
+        StartCoroutine(BeginLoading());
+    }
+
     IEnumerator BeginLoadingImage()
     {
         progress = Progress.Loading;
@@ -427,6 +431,10 @@ public class RecordingNode : MonoBehaviour
         }
 
         progress = Progress.Complete;
+
+        //initialize audio effect paramters
+        var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
+        audioLoader.LoadEffectParamters(null);
 
     }
 
