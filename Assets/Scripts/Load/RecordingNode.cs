@@ -258,7 +258,8 @@ public class RecordingNode : MonoBehaviour
         GUI.Box(barRect, "", nodeSkin.customStyles[3]);
 
         //FXGUI
-        fxGUI.Display();
+        if(winManager.yLevel/Screen.height > 0.8f)
+            fxGUI.Display();
 
     }
 
@@ -343,8 +344,6 @@ public class RecordingNode : MonoBehaviour
     IEnumerator BeginLoading()
     {
         progress = Progress.Loading;
-        if (data.SoundURL == null)
-            data.SoundURL = localWWW;
 
         www = new WWW(data.SoundURL);
         
@@ -433,8 +432,8 @@ public class RecordingNode : MonoBehaviour
         progress = Progress.Complete;
 
         //initialize audio effect paramters
-        var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
-        audioLoader.LoadEffectParamters(null);
+        //var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
+        //audioLoader.LoadEffectParamters(null);
 
     }
 

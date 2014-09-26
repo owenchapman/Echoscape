@@ -82,7 +82,7 @@ public class AllNodes : MonoBehaviour {
             tmp.transform.forward = Vector3.up;
             tmp.transform.position += 0.1f * Vector3.up;
             tmp.transform.parent = allNodes.transform;
-            tmp.transform.localScale *= 0.1f;
+            tmp.transform.localScale *= 0.5f;
             tmp.tag = "LocationNode";
             tmp.layer = 12;
 

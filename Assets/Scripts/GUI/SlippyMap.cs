@@ -68,7 +68,7 @@ public class SlippyMap : MonoBehaviour {
 		map.ShowGUIControls = false;
 		map.MinZoom = 2.9f;
 		map.CurrentZoom = 10.5f;
-		map.MaxZoom = 14f;
+		map.MaxZoom = 16f;
 
 
 		// create an OSM tile layer
@@ -100,7 +100,7 @@ public class SlippyMap : MonoBehaviour {
         else
         	map.InputsEnabled = true;
 		
-		if(Input.GetAxis("Mouse ScrollWheel") > 0 && map.CurrentZoom <10.5f)
+		if(Input.GetAxis("Mouse ScrollWheel") > 0 && map.CurrentZoom <13.5f)
 			map.Zoom(5f);
 		
 		if(Input.GetAxis("Mouse ScrollWheel") < 0)

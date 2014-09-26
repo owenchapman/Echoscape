@@ -126,6 +126,9 @@ public class EchoscapesLoader : MonoBehaviour
 			             wayState == CompletetionState.Done))
 			{
 				success = true;
+
+                StartCoroutine(LoadParameters());
+                
 				yield return 0;
 			}
 			
@@ -169,6 +172,15 @@ public class EchoscapesLoader : MonoBehaviour
 		}
 	}
 
+    IEnumerator LoadParameters()
+    {
+        yield return new WaitForSeconds(1f);
+
+        //initialize audio effect paramters
+        var audioLoader = GameObject.FindGameObjectWithTag("UserSounds").GetComponent<LoadAudioFile>();
+        audioLoader.LoadEffectParamters(null);
+    }
+
 	IEnumerator BuildFromServerLoop()
 	{
 		yield return new WaitForSeconds(1f);
@@ -181,6 +193,9 @@ public class EchoscapesLoader : MonoBehaviour
 			             wayState == CompletetionState.Done))
 			{
 				success = true;
+
+                //StartCoroutine(LoadParameters());
+
 				yield return 0;
 			}
 			

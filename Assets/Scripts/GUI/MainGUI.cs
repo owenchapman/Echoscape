@@ -20,7 +20,6 @@ public static class MainGUI
     public static AudioChorusFilter chorus;
     public static AudioListener listener;
     public static Recorder audioRecorder;
-
     public static Rect clientRect;
     public static Rect[] fiveByOneGrid;
     public static Rect[] threeByOneGrid;
@@ -30,12 +29,11 @@ public static class MainGUI
     public static NodeFilter nodeFilter;
     public static MovePlayerToNode movePlayer;
     public static LoadAudioFile audioFileLoader;
-
     public static List<EffectController> controllers;
     public static GUISkin skin;
-
     public static bool recTrigger;
     public static bool loopTrigger;
+    public static ScreenRenderTexture[] renderTextures;
 
     private static Event currEvent;
     private static Vector2 scrollPos;
@@ -45,7 +43,6 @@ public static class MainGUI
     private static float audioRange;
     private static GameObject nodeParentObj;
     private static bool autoLoop = false;
-
     private static string message = "";
     private static float alpha = 1.0f;
     private static char pathChar = '/';
@@ -119,6 +116,12 @@ public static class MainGUI
     //specific window drawing function.
     public static void SelectLayout(int ID)
     {
+        clientRect = new Rect(0, 0, Screen.width, winHeight);
+        fiveByOneGrid = Util.SelectionGrid(clientRect, 5, 5, clientRect.height - 2, 2f);
+        for(int i = 0; i < controllers.Count; i++)
+            controllers[i].clientRect = fiveByOneGrid[i];
+        threeByOneGrid = Util.SelectionGrid(clientRect, 3, 3, clientRect.height - 2, 2f);
+
         switch (ID)
         {
             case 0:
@@ -138,6 +141,7 @@ public static class MainGUI
 
     private static void MapGUI()
     {
+        //GUI.DrawTexture(clientRect, renderTextures[0].rTexture, ScaleMode.ScaleAndCrop);
         var loadRect = new Rect(clientRect.width - 105, 0, 100, 55);
 
         var infoRect = new Rect(0, 0, 400, 100);
@@ -148,7 +152,7 @@ public static class MainGUI
 
         GUILayout.BeginArea(infoRect);
         GUILayout.Label("To select an Echoscape, right mouse click on the map to place the marker."
-                        + "\nThen, click the button at the bottom of the screen", skin.customStyles[7]);
+                        + "\nThen, click the button in the top right corner of the screen", skin.customStyles[7]);
         GUILayout.EndArea();
 
         GUILayout.BeginArea(contentRect);

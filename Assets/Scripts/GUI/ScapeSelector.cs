@@ -71,12 +71,25 @@ public class ScapeSelector : MonoBehaviour
             return;
 
         mPos = Input.mousePosition;
-        mPos = this.camera.ScreenToWorldPoint(new Vector3(mPos.x, mPos.y + winManager.yLevel, this.transform.position.y));
+        var yOffset = 0.5f * (Screen.height - winManager.yLevel) + winManager.yLevel;
+        
+        //check that the camera has a valid pixel rect
+        //if(this.camera.rect.y >= 0)
+           // mPos = this.camera.ScreenToWorldPoint(new Vector3(mPos.x, mPos.y, this.transform.position.y));  
 
-        loadCoords = Util.Mercator2LonLat2(mPos, map);
+
+        //loadCoords = Util.Mercator2LonLat2(mPos, map);
 
         if(Input.GetMouseButtonDown(1))
         {
+            var ray = this.camera.ScreenPointToRay(mPos);
+            var hitInfo = new RaycastHit();
+
+            if(Physics.Raycast(ray, out hitInfo))
+            {
+                loadCoords = Util.Mercator2LonLat2(hitInfo.point, map);
+            }
+
             var coords = new double[2]{loadCoords.x, loadCoords.z};
             
             if(locationMarker == null)

@@ -10,26 +10,26 @@ public class ScreenRenderTexture : MonoBehaviour
     public Material mat;
     public bool inheritTexture = false;
     public GameObject targetGUICam;
+    public float hMult = 1f;
+    public float wMult = 1f;
 
     private GameObject texViz;
     private Vector3[] cornerVerts;
-    private Camera cam;
+    public Camera cam;
+    private int lastWidth;
+    private int lastHeight;
 
     // Use this for initialization
     void Start()
     {
 
-        rTexture = new RenderTexture(Screen.width, Screen.height, 0);
-        cam = this.camera;
-        cam.targetTexture = rTexture;
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
+        //rTexture = new RenderTexture((int) (wMult * Screen.width), (int) (hMult * Screen.height), 0);
+        //rTexture = new RenderTexture(2000, 1600, 0);
+        //rTexture.antiAliasing = 2;
+        //cam = this.camera;
+        //cam.targetTexture = rTexture;
+        //lastWidth = Screen.width;
+        //lastHeight = Screen.height;
     }
 
     Mesh BasicPlane(Vector3[] cornerVerts)

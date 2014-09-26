@@ -35,12 +35,13 @@ public class WindowManager : MonoBehaviour
     public Rect camRect;
 
     //important variable - GUILayout class depends on it. Must set manually.
-    public float winHeight = 0.4f * 800f;//Screen.height;
+    public float winHeight;
 
     // Use this for initialization
     void Start()
     {
 
+        winHeight = 0.4f * Screen.height;
         toolMenu = new string[3] { "", "", "" };
         yLevel = Screen.height;
         xLevel = 0f;
@@ -52,6 +53,7 @@ public class WindowManager : MonoBehaviour
         MainGUI.winHeight = winHeight;
         MainGUI.skin = skin;
         MainGUI.Init();
+        MainGUI.renderTextures = rTextures;
         ready = true;
         forceFreeze = false;
 
@@ -65,10 +67,19 @@ public class WindowManager : MonoBehaviour
     // Update is called once per frame
     void Update ()
 	{
+        MainGUI.winHeight = winHeight = 0.4f * Screen.height;
+        fullRect = new Rect(0, 0, Screen.width, Screen.height);
 
 		//update main scene camera
 		sceneCamera.pixelRect = new Rect (0f, Screen.height - yLevel, Screen.width, Screen.height);
 		camRect = sceneCamera.pixelRect;
+
+        //update map cam
+        var yParam = 1f - (float)yLevel/Screen.height - 0.4f;
+        yParam = Mathf.Min(0.39f, yParam);
+        var xParam = (float)xLevel/Screen.width;
+
+        Camera.main.rect = new Rect(xParam,yParam, 1f, 0.4f);
 
 		//track mouse position;
 		mPos = Input.mousePosition;
@@ -108,7 +119,7 @@ public class WindowManager : MonoBehaviour
             var currRect = new Rect(xLevel + (i * Screen.width), yLevel, Screen.width, winHeight);
 
             //Since each window has a lot of GUI controls, we call out to the separate class MainGUI.
-            guiRects[i] = GUI.Window(i, currRect, MainGUI.SelectLayout, rTextures[i].rTexture);
+            guiRects[i] = GUI.Window(i, currRect, MainGUI.SelectLayout, "");
         }
 	
 
@@ -127,11 +138,8 @@ public class WindowManager : MonoBehaviour
     void DrawFullWindow(int windowID)
     {
         var offset = new RectOffset(100, 100, 300, 300);
-
         var labelRect = offset.Remove(fullRect);
-
-        GUI.Label(labelRect, "Loading Echoscape...", skin.customStyles[9]);
-    
+        GUI.Label(labelRect, "Loading Echoscape...", skin.customStyles[9]);  
     }
 
 
@@ -141,8 +149,13 @@ public class WindowManager : MonoBehaviour
         var sizeRect = new Rect(5, 5, 20, 20);
         if (GUI.Button(sizeRect, "", skin.customStyles[2]))
         {
-            var tmp = (++screenLayout) % 2;
-            StartCoroutine(LerpY(Screen.height - (tmp * 0.4f * Screen.height)));
+            screenLayout = (++screenLayout) % 2;
+            StartCoroutine(LerpY(Screen.height - (screenLayout * 0.4f * Screen.height)));
+        }
+
+        if(!guiMoving)
+        {
+            yLevel = Screen.height - (screenLayout * 0.4f * Screen.height);
         }
 
         var selRect = new Rect(Screen.width - 50, 5, 45, 10);

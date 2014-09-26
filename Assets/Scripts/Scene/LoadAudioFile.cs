@@ -190,29 +190,26 @@ public class LoadAudioFile : MonoBehaviour
 								foreach(EffectController c in controllers)
 								{
 									//get child called c.name
-									foreach(XmlNode ec in xmlNode.ChildNodes)
+									query = String.Format("./{0}", c.name);
+									var controllerNode = xmlNode.SelectSingleNode(query);
+									//iterate through attributes in child and set the parameters in the audio filter
+
+									if(controllerNode == null)
+										continue;
+									
+									for (int j = 0; j < c.parameters.Length; j ++)
 									{
-										if(ec.Name == c.name)
-										{
-											//iterate through attributes in child and set the parameters in the audio filter
+										var p = c.parameters[j];
+										p.value = float.Parse (controllerNode.Attributes[p.ParameterName].Value);
 
-											for (int j = 0; j < c.parameters.Length; j ++)
-											{
-												var p = c.parameters[j];
-												p.value = float.Parse (ec.Attributes[p.ParameterName].Value);
-
-												c.SetParamValue(j, p.value);
-											}
-
-											//special case for enabling
-											var onOff = bool.Parse (ec.Attributes["Enabled"].Value);
-											var enabled = c.AudioFilter.GetType().GetProperty("enabled");
-											enabled.SetValue(c.AudioFilter, onOff, null);
-											c.mute = onOff;
-											break;
-										}
+										c.SetParamValue(j, p.value);
 									}
 
+									//special case for enabling
+									var onOff = bool.Parse (controllerNode.Attributes["Enabled"].Value);
+									var enabled = c.AudioFilter.GetType().GetProperty("enabled");
+									enabled.SetValue(c.AudioFilter, onOff, null);
+									c.mute = onOff;
 								}
 							}
 						}

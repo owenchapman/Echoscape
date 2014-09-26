@@ -5,6 +5,8 @@ using System;
 
 public class LogPrint : MonoBehaviour
 {	
+		public bool dispGUI = false;
+
 		private static string myLog;
 		private string output = "";
 		private string stack = "";
@@ -73,15 +75,21 @@ public class LogPrint : MonoBehaviour
 				scrollRect.height += 2f * h;
 				scrollPosition.y += 1.1f * h;
 
-				using (StreamWriter w = File.AppendText(path))		
+				try
+				{
+					using (StreamWriter w = File.AppendText(path))		
 						w.WriteLine (output);
+				}
+				catch{};
 
 		}
 	
 		void OnGUI ()
 		{
-				GUI.skin = skin;
+				if(!dispGUI)
+					return;
 
+				GUI.skin = skin;
 				scrollPosition = GUI.BeginScrollView (contentRect, scrollPosition, fullRect);
 				GUI.TextArea (scrollRect, myLog);
 				GUI.EndScrollView ();

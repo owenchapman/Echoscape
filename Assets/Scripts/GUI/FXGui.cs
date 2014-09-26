@@ -71,9 +71,11 @@ public class FXGui : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
+        clientRect = new Rect(0, 0.61f * Screen.height, Screen.width, 0.4f * Screen.height - 25f);
+        for(int i = 0; i < controllers.Count; i++)
+            controllers[i].clientRect = fiveByOneGrid[i];
     }
 
     public void Display()
